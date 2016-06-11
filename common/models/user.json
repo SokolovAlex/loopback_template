@@ -1,0 +1,47 @@
+{
+  "name": "User",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "properties": {
+    "first_name": {
+      "type": "string"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "hash": {
+      "type": "string"
+    },
+    "salt": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "token": {
+      "type": "string"
+    },
+    "isAdmin": {
+      "type": "boolean",
+      "default": false
+    },
+    "created": {
+      "type": "date"
+    },
+    "modified": {
+      "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {
+
+  },
+  "acls": [],
+  "methods": {}
+}
