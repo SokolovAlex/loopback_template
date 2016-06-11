@@ -1,5 +1,7 @@
 const app = require('../../server/server'),
     storage = require('../localStorage/storage'),
+    redisHelper = require('../utils/redisHelper'),
+    _ = require("lodash"),
     crypter = require('../utils/crypter');
 
 module.exports = function(user) {
@@ -25,7 +27,7 @@ module.exports = function(user) {
 
             var salt = crypter.salt();
 
-            data.password = crypter.salt(data.password, salt);
+            data.password = crypter.sha(data.password, salt);
             data.hash = crypter.md5(data.email);
             data.salt = salt;
 
@@ -44,10 +46,6 @@ module.exports = function(user) {
             verb: 'post'
         }
     });
-
-    user.logout = (req, res, next) => {
-        next();
-    };
 
     user.afterRemote('create', function(context, userInstance, next) {
         console.log('> user.afterRemote triggered');
@@ -69,17 +67,12 @@ module.exports = function(user) {
                 return next(new Error('email exists'));
             }
 
-            bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(data.password, salt, function(err, hash) {
-                    data.password = hash;
-                    data.salt = salt;
-                    data.hash = crypto.createHmac('sha256', salt)
-                        .update(data.email)
-                        .digest('hex');
-                    next();
-                });
-            });
+            var salt = crypter.salt();
 
+            data.password = crypter.salt(data.password, salt);
+            data.hash = crypter.md5(data.email);
+            data.salt = salt;
+            next();
         });
     });
 
@@ -87,23 +80,24 @@ module.exports = function(user) {
         accepts: [{arg: 'email', type: 'string', required: true}, {arg: 'password', type: 'string', required: true}, { arg: 'req', type: 'object', http: { source: 'req' } }, { arg: 'res', type: 'object', http: { source: 'res' } }],
         returns: { arg: 'token', type: 'object' },
         http: {
-            verb: 'get'
+            verb: 'post'
         }
     });
 
     user.login = (email, password, req, res, next) => {
-        app.models.Account.findOne({ where: { email: email}}, function(err, user) {
+        app.models.User.findOne({ where: { email: email}}, function(err, user) {
             if (err) return next(err);
-            bcrypt.compare(password, user.password, function(err, result) {
-                // var token = new AccessToken({id: user.hash});
+            crypter.compare(password, user.password, user.salt, (err, result) => {
+                if (result) {
+                    redisHelper.save(user.hash, user);
+                }
 
-                app.models.AccessToken.findById(user.id, function(err, account) {
-
-                    console.log("");
-                });
-
-                next(result);
+                setTimeout( () => {
+                    redisHelper.get(user.hash, _.noop)
+                }, 6000)
             });
+
+            next();
         });
     };
 

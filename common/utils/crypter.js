@@ -7,7 +7,7 @@ const genRandomString = (length) => {
         .slice(0,length);
 };
 
-const hash = (password, salt) => {
+const sha = (password, salt) => {
     return crypto.createHmac('sha512', salt)
         .update(password)
         .digest('hex');
@@ -23,12 +23,12 @@ const md5 = (text) => {
         .digest('hex');
 };
 
-const compare = (pasw, pasw2, salt) => {
-    return hash(pasw, salt) === hash(pasw2, salt);
+const compare = (pasw, hashPassword, salt, next) => {
+    return next(null, sha(pasw, salt) === hashPassword);
 };
 
 module.exports = {
-    hash: hash,
+    sha: sha,
     salt: salt,
     md5: md5,
     compare: compare

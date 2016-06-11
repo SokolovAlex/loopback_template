@@ -1,4 +1,6 @@
-var redis = require('redis'),
+//https://habrahabr.ru/sandbox/27636/
+
+const redis = require('redis'),
     client = redis.createClient();
 
 client.on("error", function (err) {
@@ -6,7 +8,7 @@ client.on("error", function (err) {
 });
 
 const save = (token, user) => {
-    client.set('token', user, function (err, repl) {
+    client.set(token, JSON.stringify(user), function (err, repl) {
         if (err) {
             console.log('Smth wrong: ' + err);
             return client.quit();
@@ -14,7 +16,7 @@ const save = (token, user) => {
     });
 };
 
-const getUser = (token, next) => {
+const get = (token, next) => {
     client.get(token, function (err, repl) {
         client.quit();
 
@@ -27,7 +29,7 @@ const getUser = (token, next) => {
             // Ключ ненайден
             console.log('Ключ не найден.')
 
-        };
+        }
 
         next(err, repl);
     });
@@ -37,10 +39,15 @@ const exists = (token, next) => {
     client.get(token, next);
 };
 
-let redis = {
+const remove = (token, next) => {
+    client.del(token, next);
+};
+
+const redisInstane = {
     save: save,
-    getUser: getUser,
+    remove: remove,
+    get: get,
     exists: exists
 };
 
-module.exports = redis;
+module.exports = redisInstane;
