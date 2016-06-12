@@ -7,10 +7,6 @@ const app = require('../../server/server'),
 const access_key = "x-access";
 
 module.exports = function(user) {
-    user.logout = (req, res, next) => {
-        next();
-    };
-
     user.registration = (data, req, res, next) => {
         if (!data.email) {
             return next(new Error('email required'));
@@ -40,7 +36,6 @@ module.exports = function(user) {
             });
         });
     };
-    
     user.remoteMethod('registration', {
         accepts: [{ arg: 'data', type: 'object', http: { source: 'body' } }, { arg: 'req', type: 'object', http: { source: 'req' } }, { arg: 'res', type: 'object', http: { source: 'res' } }],
         returns: { arg: 'user', type: 'object' },
@@ -53,7 +48,6 @@ module.exports = function(user) {
         console.log('> user.afterRemote triggered');
         next();
     });
-
     user.beforeRemote('create', function(context, userInstance, next) {
         console.log('> user.beforeRemote triggered');
         var data = context.req.body;
@@ -85,7 +79,6 @@ module.exports = function(user) {
             verb: 'post'
         }
     });
-
     user.login = (email, password, req, res, next) => {
         app.models.User.findOne({ where: { email: email}}, function(err, user) {
             if (err) return next(err);
@@ -112,9 +105,11 @@ module.exports = function(user) {
             verb: 'post'
         }
     });
-
     user.logout = (req, res, next) => {
         var hash = req.cookies[access_key];
+        if(!hash) {
+            return next(new Error('noone login'));
+        }
         redisHelper.remove(hash, () => {
             console.log('logout user:', hash);
             res.cookie(access_key, null);

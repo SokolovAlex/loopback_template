@@ -2,10 +2,15 @@ var loopback = require('loopback');
 var boot = require('loopback-boot');
 var cookieParser = require('cookie-parser');
 
+var auth = require('../common/middleware/auth.js');
+
 var app = module.exports = loopback();
 
 app.use(loopback.context());
+
 app.use(cookieParser());
+
+app.use(auth(app));
 
 app.start = function() {
   // start the web server
