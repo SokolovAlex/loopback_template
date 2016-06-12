@@ -4,6 +4,8 @@ const app = require('../../server/server'),
     _ = require("lodash"),
     crypter = require('../utils/crypter');
 
+const access_key = "x-access";
+
 module.exports = function(user) {
     user.logout = (req, res, next) => {
         next();
@@ -90,14 +92,16 @@ module.exports = function(user) {
             crypter.compare(password, user.password, user.salt, (err, result) => {
                 if (result) {
                     redisHelper.save(user.hash, user);
+                    res.cookie(access_key, user.hash, {
+                        maxAge: 1000 * 3600
+                    });
+                    next(null, user.hash);
                 }
 
                 setTimeout( () => {
-                    redisHelper.get(user.hash, _.noop)
-                }, 6000)
+                    redisHelper.get(user.hash, _.noop);
+                }, 6000);
             });
-
-            next();
         });
     };
 
@@ -108,6 +112,15 @@ module.exports = function(user) {
             verb: 'post'
         }
     });
+
+    user.logout = (req, res, next) => {
+        var hash = req.cookies[access_key];
+        redisHelper.remove(hash, () => {
+            console.log('logout user:', hash);
+            res.cookie(access_key, null);
+            next();
+        });
+    };
 
     user.disableRemoteMethod("updateAll", true);
     user.disableRemoteMethod("updateAttributes", false);

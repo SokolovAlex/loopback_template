@@ -1,9 +1,11 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+var cookieParser = require('cookie-parser');
 
 var app = module.exports = loopback();
 
 app.use(loopback.context());
+app.use(cookieParser());
 
 app.start = function() {
   // start the web server
