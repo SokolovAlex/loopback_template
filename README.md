@@ -16,10 +16,17 @@ db would be updated after starting application
 
 change creds to db server/datasources.json
 
-
 resis npm https://www.npmjs.com/package/redis
 
 loopback source https://github.com/strongloop/loopback
+
+-- tests = jasmine
+
+-- router
+
+-- generic grid
+
+
 
 
 
