@@ -15,7 +15,12 @@ module.exports = (app) => {
         }
         var hash = req.cookies[access_key];
 
+        console.log("hash", hash);
+
         redisHelper.get(hash, (err, user) => {
+
+            console.log("--?", user);
+
             if (!user) {
                 return next(new Error("Not authorized"));
             }

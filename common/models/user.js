@@ -88,12 +88,9 @@ module.exports = function(user) {
                     res.cookie(access_key, user.hash, {
                         maxAge: 1000 * 3600
                     });
+                    console.log("login", user.hash);
                     next(null, user.hash);
                 }
-
-                setTimeout( () => {
-                    redisHelper.get(user.hash, _.noop);
-                }, 6000);
             });
         });
     };

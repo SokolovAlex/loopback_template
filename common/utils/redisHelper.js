@@ -9,7 +9,6 @@ client.on("error", function (err) {
 
 const save = (token, user, next) => {
     client.set(token, JSON.stringify(user), function (err, repl) {
-        client.quit();
         if (next) {
             next(err, repl);
         }
@@ -18,23 +17,17 @@ const save = (token, user, next) => {
 
 const get = (token, next) => {
     client.get(token, function (err, repl) {
-        client.quit();
-        next(err, repl);
+        if (err || !repl) return next(true);
+        next(null, JSON.parse(repl));
     });
 };
 
 const exists = (token, next) => {
-    client.get(token, (err, res) => {
-        client.quit();
-        next(err, res);
-    });
+    client.get(token, next);
 };
 
 const remove = (token, next) => {
-    client.del(token, (err, res) => {
-        client.quit();
-        next(err, res);
-    });
+    client.del(token, next);
 };
 
 const redisInstane = {
