@@ -20,7 +20,9 @@ resis npm https://www.npmjs.com/package/redis
 
 loopback source https://github.com/strongloop/loopback
 
--- tests = jasmine
+-- seed
+
+-- tests = jasmine https://github.com/jasmine/jasmine
 
 -- router
 

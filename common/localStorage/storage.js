@@ -1,7 +1,6 @@
 /**
  * Created by sokolov on 10.06.2016.
  */
-
 const fs = require('fs'),
     _ = require('lodash');
 

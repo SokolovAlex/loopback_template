@@ -1,10 +1,13 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
 var cookieParser = require('cookie-parser');
+const path = require('path');
 
 var auth = require('../common/middleware/auth.js');
 
 var app = module.exports = loopback();
+
+app.use(loopback.static(path.resolve(__dirname, '../client')));
 
 app.use(loopback.context());
 
