@@ -24,8 +24,6 @@ loopback source https://github.com/strongloop/loopback
 
 -- tests = jasmine https://github.com/jasmine/jasmine
 
--- router
-
 -- generic grid
 
 

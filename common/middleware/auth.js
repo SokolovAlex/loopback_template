@@ -10,9 +10,20 @@ const access_key = "x-access";
 
 module.exports = (app) => {
     return (req, res, next) => {
-        if (config.public.indexOf(req.path) !== -1) {
+        
+        var privateUrl =  _.find(config.private, x => {
+            return req.path.indexOf(x.match) !== -1;
+        });
+
+        if (!privateUrl) {
             return next();
         }
+
+        var isExclude =  privateUrl.exceptions.indexOf(req.path) !==  -1;
+        if (isExclude) {
+            return next();
+        }
+
         var hash = req.cookies[access_key];
 
         redisHelper.get(hash, (err, user) => {

@@ -25,6 +25,9 @@ module.exports = function(user) {
 
             var salt = crypter.salt();
 
+            console.log("!", account);
+
+
             data.password = crypter.sha(data.password, salt);
             data.hash = crypter.md5(data.email);
             data.salt = salt;

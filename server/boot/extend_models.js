@@ -16,6 +16,8 @@ module.exports = (app) => {
             } else {
                 ctx.data.modified = new Date();
             }
+
+            
             next();
         });
     }
