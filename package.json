@@ -20,9 +20,11 @@
     "serve-favicon": "^2.0.1"
   },
   "devDependencies": {
+    "browserify": "^13.0.1",
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.1.0",
-    "jasmine": "^2.4.1"
+    "jasmine": "^2.4.1",
+    "vinyl-source-stream": "^1.1.0"
   },
   "repository": {
     "type": "",

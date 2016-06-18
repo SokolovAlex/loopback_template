@@ -20,8 +20,6 @@ resis npm https://www.npmjs.com/package/redis
 
 loopback source https://github.com/strongloop/loopback
 
--- seed
-
 -- tests = jasmine https://github.com/jasmine/jasmine
 
 -- generic grid
